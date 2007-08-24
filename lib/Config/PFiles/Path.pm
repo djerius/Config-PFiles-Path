@@ -28,12 +28,30 @@ use Symbol;
 use Carp;
 use Sub::Uplevel;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use overload '""' => '_export' ;
 
 my %is_mutator
   = map { $_ => 1 } qw( _append _prepend _replace _remove );
+
+our $AUTOLOAD;
+
+# allow the user to do thing when loading the package
+sub import {
+
+    my $package = shift;
+
+    return unless @_;
+
+    my $method = shift;
+
+    croak( "Can't call method '$method' in this context\n" )
+      unless $is_mutator{ "_$method" };
+
+    $AUTOLOAD = $method;
+    uplevel 1, \&AUTOLOAD, $package, @_;
+}
 
 sub AUTOLOAD {
     (my $method = our $AUTOLOAD) =~ s/.*:://;
@@ -102,7 +120,6 @@ sub AUTOLOAD {
 	goto &$imethod;
     }
 }
-
 
 sub new {
     my ( $class, $pfiles ) = @_;
@@ -268,12 +285,41 @@ writeable and those to the right are readable only.
 B<Config::PFiles::Path> can operate directly upon C<$ENV{PFILES}> or
 can operate on a path object which can be exported.
 
+There are two approaches to operating directly on C<$ENV{PFILES}>.
+
+=over
+
+=item 1.
+
+Use class methods
+
 If the methods in B<Config::PFiles::Path> are used as class (rather
 than object) methods, they work directly upon C<$ENV{PFILES}>.  For example,
 
     Config::PFiles::Path->prepend( RW => "$ENV{HOME}/pfiles" );
 
-will modify C<$ENV{PFILES}>, while
+=item 2.
+
+Specify the method and its parameters on package loading
+
+Methods which change the path ( B<append>, B<prepend>, B<remove>, and
+B<replace>) may be specified when the package is loaded:
+
+    use Config::PFiles::Path prepend => RW => "$ENV{HOME}/pfiles";
+
+Note that the method name is passed as a I<string>; this example uses
+the C<< => >> operator to quote things.  The above may also have been
+written as
+
+    use Config::PFiles::Path ('prepend', 'RW', "$ENV{HOME}/pfiles");
+
+This approach lends itself to situations where only a single manipulation
+is required.
+
+=back
+
+
+Object methods don't touch C<$ENV{PFILES}>.  For example,
 
     $env = Config::PFiles::Path->new( $ENV{PFILES} );
     $env->prepend( RW => "$ENV{HOME}/pfiles" );
@@ -361,7 +407,7 @@ L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Config-PFiles-Path>.
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =head1 LICENSE AND COPYRIGHT
 
