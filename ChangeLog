@@ -1,4 +1,13 @@
 2007-08-24  Diab Jerius  <djerius@cfa.harvard.edu>
 
-	Initial release.
+	Tag 0.01
+
+2007-08-24  djerius  <djerius@cfa.harvard.edu>
+
+	* ChangeLog, Changes, LICENSE, Makefile.PL, README,
+	lib/Config/PFiles/Path.pm, t/00-load.t, t/class.t, t/export.t,
+	t/extract.t, t/mutator.t, t/new.t, t/perlcritic.t, t/pod-coverage.t,
+	t/pod.t:
+	initial release
+	[07a18640a812] [tip]
 
