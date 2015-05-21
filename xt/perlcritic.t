@@ -2,7 +2,7 @@
 
 use Test::More;
 
-if (! eval { require Test::Perl::Critic } ) {
+if (! eval{ require Test::Perl::Critic }) {
     Test::More::plan(
         skip_all => "Test::Perl::Critic required for testing PBP compliance"
     );
