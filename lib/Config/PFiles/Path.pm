@@ -30,7 +30,7 @@ use Symbol;
 use Carp;
 use Sub::Uplevel;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use overload '""' => '_export' ;
 
