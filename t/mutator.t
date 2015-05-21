@@ -14,7 +14,7 @@ sub test {
     my $path = Config::PFiles::Path->new( $pfiles );
 
     $pfiles ||= "''";
-    foreach my $set qw( RW RO )
+    foreach my $set ( qw( RW RO ) )
     {
 	$path->$method( $set, @$dirs );
 	is_deeply( [ $path->extract( $set )  ], $exp{$set}, "$method ($set): $pfiles" )
