@@ -21,6 +21,8 @@
 
 package Config::PFiles::Path;
 
+use 5.008009;
+
 use strict;
 use warnings;
 
