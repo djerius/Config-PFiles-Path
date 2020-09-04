@@ -1,0 +1,182 @@
+# NAME
+
+Config::PFiles::Path - manipulate PFILES path for IRAF Compatible parameter files
+
+# VERSION
+
+version 0.03
+
+# SYNOPSIS
+
+    use Config::PFiles::Path;
+
+    $path = Config::PFiles::Path->new( \%options);
+
+    # append to writeable or readonly directories
+    $path->append( RW => @dirs );
+    $path->append( RO => @dirs );
+
+    # prepend to writeable or readonly directories
+    $path->prepend( RW => @dirs );
+    $path->prepend( RO => @dirs );
+
+    # extract directories
+    @rw_dirs = $path->extract( 'RW' );
+    @ro_dirs = $path->extract( 'RO' );
+
+    # replace writeable or readonly directories
+    @rw_dirs = $path->replace( RW => @dirs );
+    @ro_dirs = $path->replace( RW => @dirs );
+
+    # remove writeable or readonly directories
+    @rw_dirs = $path->remove( 'RW' );
+    @ro_dirs = $path->remove( 'RO' );
+
+    # create a sring version of the path
+    $pfiles = $path->export;
+
+    # work directly on $ENV{PFILES}
+    Config::PFiles::Path->append( RO => @dirs );
+
+# DESCRIPTION
+
+**Config::PFiles::Path** manipulates the parameter file path used by
+IRAF "compatible" parameter interfaces (IRAF (of course), CIAO's
+**cxcparam**, MARX's **libpfile**, INTEGRAL's **PIL**).  The path is
+composed of two sets of directories; the first is both user readable
+and user writeable, the other is only user readable.  The path is kept
+in the **PFILES** environmental variable, and takes the form
+
+    rw1:rw2;ro1:ro2
+
+where directories to the left of the semicolon are user readable and
+writeable and those to the right are readable only.
+
+# INTERFACE
+
+**Config::PFiles::Path** can operate directly upon `$ENV{PFILES}` or
+can operate on a path object which can be exported.
+
+There are two approaches to operating directly on `$ENV{PFILES}`.
+
+1. Use class methods
+
+    If the methods in **Config::PFiles::Path** are used as class (rather
+    than object) methods, they work directly upon `$ENV{PFILES}`.  For example,
+
+        Config::PFiles::Path->prepend( RW => "$ENV{HOME}/pfiles" );
+
+2. Specify the method and its parameters on package loading
+
+    Methods which change the path ( **append**, **prepend**, **remove**, and
+    **replace**) may be specified when the package is loaded:
+
+        use Config::PFiles::Path prepend => RW => "$ENV{HOME}/pfiles";
+
+    Note that the method name is passed as a _string_; this example uses
+    the `=>` operator to quote things.  The above may also have been
+    written as
+
+        use Config::PFiles::Path ('prepend', 'RW', "$ENV{HOME}/pfiles");
+
+    This approach lends itself to situations where only a single manipulation
+    is required.
+
+Object methods don't touch `$ENV{PFILES}`.  For example,
+
+    $env = Config::PFiles::Path->new( $ENV{PFILES} );
+    $env->prepend( RW => "$ENV{HOME}/pfiles" );
+
+modifies the path object `$env`.
+
+## Methods
+
+- new
+
+        $path = Config::PFiles::Path->new( $pfiles );
+
+    This creates a new **Config::PFiles::Path** object using the provided
+    parameter file path.  Typically this will be `$ENV{PFILES}`.  If
+    **$pfiles** is not specified an empty path is constructed.
+
+- export
+
+        $PFILES = $path->export;
+
+    This method generates a string version of the current path. See also
+    ["Overloaded Operators"](#overloaded-operators).
+
+- append
+
+        $path->append( RW => @dirs );
+        $path->append( RO => @dirs );
+
+    Append a list of directories to either the read/write set or read-only
+    set of directories.  The first argument indicates the set to append to.
+
+- prepend
+
+        $path->prepend( RW => @dirs );
+        $path->prepend( RO => @dirs );
+
+    Prepend a list of directories to either the read/write set or read-only
+    set of directories.  The first argument indicates the set to prepend to.
+
+- replace
+
+        @old_rw_dirs = $path->replace( RW => @dirs );
+        @old_ro_dirs = $path->replace( RO => @dirs );
+
+    Replace either the read/write set or read-only set of directories.
+    The first argument indicates the set to replace.
+
+- remove
+
+        @rw_dirs = $path->remove( 'RW' );
+        @ro_dirs = $path->remove( 'RO' );
+
+    Delete either the read/write set or read-only set of directories.  The
+    set of deleted directories is returned.  The first argument indicates
+    the set to delete.
+
+- extract
+
+        @rw_dirs = $path->extract( 'RW' );
+        @ro_dirs = $path->extract( 'RO' );
+
+    Extract either the read/write set or read-only set of directories. The
+    first argument indicates the set to extract.
+
+## Overloaded Operators
+
+**Config::PFiles::Path** overloads the "" operator.  When interpolating
+an object in a string it will be replaced with the output of the
+**export()** method.
+
+# SUPPORT
+
+## Bugs
+
+Please report any bugs or feature requests to bug-config-pfiles-path@rt.cpan.org  or through the web interface at: https://rt.cpan.org/Public/Dist/Display.html?Name=Config-PFiles-Path
+
+## Source
+
+Source is available at
+
+    https://gitlab.com/djerius/config-pfiles-path
+
+and may be cloned from
+
+    https://gitlab.com/djerius/config-pfiles-path.git
+
+# AUTHOR
+
+Diab Jerius <djerius@cpan.org>
+
+# COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2007 by Smithsonian Astrophysical Observatory.
+
+This is free software, licensed under:
+
+    The GNU General Public License, Version 3, June 2007

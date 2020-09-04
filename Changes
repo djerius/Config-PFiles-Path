@@ -1,4 +1,6 @@
-Revision history for Config-PFiles-Path
+Revision history for {{$dist->name}}
+
+{{$NEXT}}
 
 0.03	2015-05-21T14:37:33-0400
 
