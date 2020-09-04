@@ -4,7 +4,7 @@ Config::PFiles::Path - manipulate PFILES path for IRAF Compatible parameter file
 
 # VERSION
 
-version 0.03
+version 0.04
 
 # SYNOPSIS
 

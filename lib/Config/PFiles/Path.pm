@@ -10,7 +10,7 @@ use warnings;
 use Symbol ();
 use Sub::Uplevel ();
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use overload '""' => '_export' ;
 
